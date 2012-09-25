@@ -1,11 +1,10 @@
-#include "fish.cpp"
+#Include "fish.cpp"
 
 class fishczp : public fish {
-  fishczp() {}
 private:
   static const int mapSizeX, mapSizeY;
   static const int dir[4][2];
-  int hp, att, sp, maxhp, level, temp, swx, swy, fishx, fishy, px, py, attackDir;
+  int hp, att, sp, maxhp, level, temp, swx, swy, fishx, fishy, px, py, id, attackDir;
   bool pointflag, over;
   void addPoints() {
     if (!askPoint()) return;
@@ -43,6 +42,7 @@ private:
     att = askAtt();
     sp = askSp();
     maxhp = askMaxHP();
+    id = askWhat(px, py);
   }
   int dist(int a, int b, int c, int d) {
     return abs(a - c) + abs(b - d);
@@ -52,7 +52,7 @@ private:
     for (int k = 0; k < 4; ++k) {
       if (x + dir[k][0] >= 0 && x + dir[k][0] < mapSizeX &&
 	  y + dir[k][1] >= 0 && y + dir[k][1] < mapSizeY && 
-	  askWhat(x + dir[k][0], y + dir[k][1]) == 0 &&
+	  (askWhat(x + dir[k][0], y + dir[k][1]) == 0 || askWhat(x + dir[k][0], y + dir[k][1]) == id) &&
 	  dist(x + dir[k][0], y + dir[k][1], px, py) <= sp * step) {
 	attackDir = k;
         return true;
@@ -91,6 +91,7 @@ public:
     for (int i = 0; i < mapSizeX; ++i) {
       for (int j = 0; j < mapSizeY; ++j) {
 	temp = askWhat(i, j);
+	if (temp == id) continue;
 	if (temp == 0) continue;
 	if (temp < 0) {
 	  if (dist(i, j, px, py) < dist(swx, swy, px, py)) {
